@@ -1,53 +1,44 @@
-import { useState } from 'react'
-import UserList from './components/UserList'
-import CreateUser from './components/CreateUser'
-import ItemList from './components/ItemList'
-import './styles/App.css'
+import { useState, useEffect } from 'react'
+import Login from './components/Login'
+import ChatBot from './components/ChatBot'
 
 function App() {
-  const [activeTab, setActiveTab] = useState<'users' | 'items'>('users')
-  const [refreshTrigger, setRefreshTrigger] = useState(0)
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
-  const handleUserCreated = () => {
-    setRefreshTrigger(prev => prev + 1)
+  useEffect(() => {
+    // Check if user is already logged in
+    const savedUser = localStorage.getItem('user')
+    if (savedUser) {
+      setUser(JSON.parse(savedUser))
+    }
+    setLoading(false)
+  }, [])
+
+  const handleLoginSuccess = (userData: any) => {
+    setUser(userData)
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('user')
+    setUser(null)
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-500 to-blue-700 text-white text-2xl">
+        Loading...
+      </div>
+    )
   }
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>FastAPI Management</h1>
-        <p>Manage Users and Items</p>
-      </header>
-      
-      <nav className="app-nav">
-        <button 
-          className={`nav-btn ${activeTab === 'users' ? 'active' : ''}`}
-          onClick={() => setActiveTab('users')}
-        >
-          Users
-        </button>
-        <button 
-          className={`nav-btn ${activeTab === 'items' ? 'active' : ''}`}
-          onClick={() => setActiveTab('items')}
-        >
-          Items
-        </button>
-      </nav>
-
-      <main className="app-main">
-        {activeTab === 'users' && (
-          <div className="tab-content">
-            <CreateUser onUserCreated={handleUserCreated} />
-            <UserList refreshTrigger={refreshTrigger} />
-          </div>
-        )}
-        
-        {activeTab === 'items' && (
-          <div className="tab-content">
-            <ItemList refreshTrigger={refreshTrigger} />
-          </div>
-        )}
-      </main>
+    <div>
+      {user ? (
+        <ChatBot user={user} onLogout={handleLogout} />
+      ) : (
+        <Login onLoginSuccess={handleLoginSuccess} />
+      )}
     </div>
   )
 }
