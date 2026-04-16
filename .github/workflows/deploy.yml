@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "frontend/**"   # 👈 THIS IS THE FIX
+      - "frontend/**"  
 
 jobs:
   deploy:
