@@ -1,7 +1,6 @@
 from fastapi import FastAPI
-from app.api.routes import user, item
-from app.core.database import Base, engine
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.database import Base, engine
 
 app = FastAPI()
 
@@ -17,6 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Routes
-app.include_router(user.router, prefix="/users", tags=["Users"])
-app.include_router(item.router, prefix="/items", tags=["Items"])
+@app.get("/")
+def read_root():
+    return {"message": "API is working"}
