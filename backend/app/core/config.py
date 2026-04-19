@@ -1,4 +1,4 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -6,11 +6,10 @@ class Settings(BaseSettings):
     APP_NAME: str = "FastAPI Backend"
     DEBUG: bool = True
 
-    # Database (default SQLite for now)
+    # Database - Use PostgreSQL on Render
     DATABASE_URL: str = "sqlite:///./test.db"
 
-    class Config:
-        env_file = ".env"
+    model_config = {"env_file": ".env"}
 
 
 # Create global settings object
