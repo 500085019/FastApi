@@ -32,9 +32,9 @@ const UserList: React.FC<UserListProps> = ({ refreshTrigger }) => {
     try {
       const data = await apiClient.getUsers(0, 50)
       setUsers(data)
-    } catch (err) {
+    } catch (err : any) {
       setError('Failed to fetch users')
-      console.error(err)
+      console.error(err.message)
     } finally {
       setLoading(false)
     }
@@ -45,9 +45,9 @@ const UserList: React.FC<UserListProps> = ({ refreshTrigger }) => {
       try {
         await apiClient.deleteUser(id)
         setUsers(users.filter(u => u.id !== id))
-      } catch (err) {
+      } catch (err : any) {
         setError('Failed to delete user')
-        console.error(err)
+        console.error(err.message)
       }
     }
   }

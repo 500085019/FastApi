@@ -31,9 +31,9 @@ const ItemList: React.FC<ItemListProps> = ({ refreshTrigger }) => {
     try {
       const data = await apiClient.getItems(0, 50)
       setItems(data)
-    } catch (err) {
+    } catch (err : any) {
       setError('Failed to fetch items')
-      console.error(err)
+      console.error(err.message)
     } finally {
       setLoading(false)
     }

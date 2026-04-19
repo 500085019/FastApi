@@ -45,9 +45,9 @@ const CreateUser: React.FC<CreateUserProps> = ({ onUserCreated }) => {
       setSuccess(true)
       setTimeout(() => setSuccess(false), 3000)
       onUserCreated()
-    } catch (err) {
+    } catch (err : any) {
       setError('Failed to create user. Please try again.')
-      console.error(err)
+      console.error(err.message)
     } finally {
       setLoading(false)
     }
