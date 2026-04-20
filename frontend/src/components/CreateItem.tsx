@@ -1,177 +1,128 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { Dialog } from '@headlessui/react'
+import { PlusIcon } from '@heroicons/react/24/solid'
 import apiClient from '../services/apiClient'
-import '../styles/components.css'
-import { Item , CreateItemProps } from '../types/item'
-
-
-
+import { CreateItemProps } from '../types/item'
 
 const CreateItem: React.FC<CreateItemProps> = ({ onItemCreated }) => {
-  const [items, setItems] = useState<Item[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string>('')
+  const [isOpen, setIsOpen] = useState(false)
+  const [error, setError] = useState('')
 
-  // NEW: create form state
-  const [showForm, setShowForm] = useState(false)
-  const [newItem, setNewItem] = useState({
+  const [formData, setFormData] = useState({
     title: '',
     description: '',
     price: '',
     owner_id: ''
   })
 
-  useEffect(() => {
-    fetchItems()
-  }, [onItemCreated])
-
-  const fetchItems = async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const data = await apiClient.getItems(0, 50)
-      setItems(data)
-    } catch (err: any) {
-      setError('Failed to fetch items')
-      console.error(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this item?')) {
-      try {
-        await apiClient.deleteItem(id)
-        setItems(items.filter(i => i.id !== id))
-      } catch (err) {
-        setError('Failed to delete item')
-        console.error(err)
-      }
-    }
-  }
-
-  // NEW: handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewItem({
-      ...newItem,
+    setFormData({
+      ...formData,
       [e.target.name]: e.target.value
     })
   }
 
-  // NEW: create item
-  const handleCreate = async () => {
+  const handleSubmit = async () => {
     try {
       const payload = {
-        ...newItem,
-        price: parseFloat(newItem.price),
-        owner_id: parseInt(newItem.owner_id)
+        ...formData,
+        price: parseFloat(formData.price),
+        owner_id: parseInt(formData.owner_id)
       }
 
-      const createdItem = await apiClient.createItem(payload)
+      await apiClient.createItem(payload)
 
-      setItems([createdItem, ...items])
-      setShowForm(false)
-
-      // reset form
-      setNewItem({
+      setFormData({
         title: '',
         description: '',
         price: '',
         owner_id: ''
       })
+
+      setIsOpen(false)
+      onItemCreated()
     } catch (err) {
       setError('Failed to create item')
       console.error(err)
     }
   }
 
-  if (loading) return <div className="loading">Loading items...</div>
-
   return (
-    <div className="component-container">
-      <h2>Items List</h2>
-
+    <div className="mb-6">
       {/* CREATE BUTTON */}
-      <button 
-        className="btn-primary"
-        onClick={() => setShowForm(!showForm)}
+      <button
+        onClick={() => setIsOpen(true)}
+        className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-xl shadow hover:bg-blue-700 transition"
       >
-        {showForm ? 'Cancel' : 'Create Item'}
+        <PlusIcon className="h-5 w-5" />
+        Create Item
       </button>
 
-      {/* CREATE FORM */}
-      {showForm && (
-        <div className="form-container">
-          <input
-            name="title"
-            placeholder="Title"
-            value={newItem.title}
-            onChange={handleChange}
-          />
-          <input
-            name="description"
-            placeholder="Description"
-            value={newItem.description}
-            onChange={handleChange}
-          />
-          <input
-            name="price"
-            placeholder="Price"
-            value={newItem.price}
-            onChange={handleChange}
-          />
-          <input
-            name="owner_id"
-            placeholder="Owner ID"
-            value={newItem.owner_id}
-            onChange={handleChange}
-          />
+      {/* MODAL */}
+      <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
 
-          <button className="btn-success" onClick={handleCreate}>
-            Submit
-          </button>
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md space-y-4">
+            
+            <Dialog.Title className="text-xl font-semibold">
+              Create New Item
+            </Dialog.Title>
+
+            {error && (
+              <p className="text-red-500 text-sm">{error}</p>
+            )}
+
+            <input
+              name="title"
+              placeholder="Title"
+              value={formData.title}
+              onChange={handleChange}
+              className="w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <input
+              name="description"
+              placeholder="Description"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <input
+              name="price"
+              placeholder="Price"
+              value={formData.price}
+              onChange={handleChange}
+              className="w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <input
+              name="owner_id"
+              placeholder="Owner ID"
+              value={formData.owner_id}
+              onChange={handleChange}
+              className="w-full border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <div className="flex justify-end gap-3 pt-2">
+              <button
+                onClick={() => setIsOpen(false)}
+                className="px-4 py-2 rounded-lg border hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleSubmit}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+              >
+                Create
+              </button>
+            </div>
+          </Dialog.Panel>
         </div>
-      )}
-
-      {error && <div className="error-message">{error}</div>}
-
-      {items.length === 0 ? (
-        <p className="no-data">No items found</p>
-      ) : (
-        <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Owner ID</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map(item => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.title}</td>
-                  <td>{item.description || 'N/A'}</td>
-                  <td>${item.price.toFixed(2)}</td>
-                  <td>{item.owner_id}</td>
-                  <td>
-                    <button 
-                      className="btn-delete"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      </Dialog>
     </div>
   )
 }
