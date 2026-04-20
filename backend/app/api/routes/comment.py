@@ -3,17 +3,9 @@ from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.schemas.comment import CommentCreate, CommentUpdate, Comment
 from app.crud import comment as crud_comment
+from app.api.deps import get_db
 
 router = APIRouter()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @router.get("/", response_model=list[Comment])
 def get_comments(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):

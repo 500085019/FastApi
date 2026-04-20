@@ -3,17 +3,8 @@ from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.schemas.post import PostCreate, PostUpdate, Post
 from app.crud import post as crud_post
-
+from app.api.deps import get_db
 router = APIRouter()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @router.get("/", response_model=list[Post])
 def get_posts(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):

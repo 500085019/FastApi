@@ -3,17 +3,9 @@ from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.schemas.category import CategoryCreate, CategoryUpdate, Category
 from app.crud import category as crud_category
+from app.api.deps import get_db
 
 router = APIRouter()
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 
 @router.get("/", response_model=list[Category])
 def get_categories(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
