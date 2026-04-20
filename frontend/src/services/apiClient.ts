@@ -101,6 +101,20 @@ class ApiClient {
       throw error
     }
   }
+  async createItem(itemData: {
+  title: string
+  description?: string
+  price: number
+  owner_id: number
+}) {
+  try {
+    const response = await this.client.post('/items', itemData)
+    return response.data
+  } catch (error) {
+    console.error('Error creating item:', error)
+    throw error
+  }
+}
 
   async deleteItem(id: number) {
     try {
