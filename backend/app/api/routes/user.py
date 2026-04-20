@@ -6,17 +6,12 @@ from app.crud import user as crud_user
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from app.api.rate_limits import RATE_LIMITS
+from app.api.deps import get_db
 
 router = APIRouter()
 limiter = Limiter(key_func=get_remote_address)
 
 # DB dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.get("/")
 @limiter.limit(RATE_LIMITS["get_all"])
