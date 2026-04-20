@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Dialog } from '@headlessui/react'
-import { PlusIcon } from '@heroicons/react/24/solid'
 import apiClient from '../services/apiClient'
 import { CreateItemProps } from '../types/item'
 
