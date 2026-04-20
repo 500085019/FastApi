@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import apiClient from '../services/apiClient'
 import '../styles/components.css'
-import { Item , ItemListProps } from '../types/item'
+import { Item , CreateItemProps } from '../types/item'
 
 
 
 
-const ItemList: React.FC<ItemListProps> = ({ refreshTrigger }) => {
+const CreateItem: React.FC<CreateItemProps> = ({ onItemCreated }) => {
   const [items, setItems] = useState<Item[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>('')
@@ -22,7 +22,7 @@ const ItemList: React.FC<ItemListProps> = ({ refreshTrigger }) => {
 
   useEffect(() => {
     fetchItems()
-  }, [refreshTrigger])
+  }, [onItemCreated])
 
   const fetchItems = async () => {
     setLoading(true)
@@ -176,4 +176,4 @@ const ItemList: React.FC<ItemListProps> = ({ refreshTrigger }) => {
   )
 }
 
-export default ItemList
+export default CreateItem

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import UserList from './components/UserList'
 import CreateUser from './components/CreateUser'
 import ItemList from './components/ItemList'
+import CreateItem from './components/CreateItem'
 import './styles/App.css'
 
 function App() {
@@ -11,6 +12,9 @@ function App() {
   const handleUserCreated = () => {
     setRefreshTrigger(prev => prev + 1)
   }
+  const handleItemCreated = () => {
+  setRefreshTrigger(prev => prev + 1)
+}
 
   return (
     <div className="app">
@@ -44,6 +48,7 @@ function App() {
         
         {activeTab === 'items' && (
           <div className="tab-content">
+            <CreateItem onItemCreated={handleItemCreated} />
             <ItemList refreshTrigger={refreshTrigger} />
           </div>
         )}
