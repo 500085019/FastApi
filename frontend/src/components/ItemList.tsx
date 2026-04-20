@@ -43,44 +43,66 @@ const ItemList: React.FC<ItemListProps> = ({ refreshTrigger }) => {
 
   return (
     <div className="component-container">
-      <h2>Items List</h2>
-      {error && <div className="error-message">{error}</div>}
+      <div className="bg-white/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/30 mb-4">
+  <h2 className="text-2xl font-bold text-gray-800">
+    Items Dashboard
+  </h2>
+  <p className="text-gray-500 text-sm">
+    Manage your items in a modern interface
+  </p>
+</div>
+      {error && <div className="bg-red-100/80 backdrop-blur border border-red-300 
+text-red-700 px-4 py-3 rounded-xl shadow">
+  {error}
+</div>}
       
       {items.length === 0 ? (
-        <p className="no-data">No items found</p>
+        <div className="text-center py-20">
+  <h3 className="text-xl font-semibold text-gray-600">
+    No items yet
+  </h3>
+  <p className="text-gray-400 mt-2">
+    Create your first item to get started 🚀
+  </p>
+</div>
       ) : (
         <div className="table-container">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Owner ID</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map(item => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.title}</td>
-                  <td>{item.description || 'N/A'}</td>
-                  <td>${item.price.toFixed(2)}</td>
-                  <td>{item.owner_id}</td>
-                  <td>
-                    <button 
-                      className="btn-delete"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  {items.map(item => (
+    <div 
+      key={item.id}
+      className="bg-white/70 backdrop-blur-lg border border-white/30 
+      rounded-2xl p-5 shadow-lg hover:shadow-2xl transition duration-300"
+    >
+      <div className="flex justify-between items-start">
+        <h3 className="text-lg font-semibold text-gray-800">
+          {item.title}
+        </h3>
+
+        <button
+          onClick={() => handleDelete(item.id)}
+          className="text-red-500 hover:text-red-700"
+        >
+          ✕
+        </button>
+      </div>
+
+      <p className="text-gray-500 text-sm mt-2">
+        {item.description || 'No description'}
+      </p>
+
+      <div className="mt-4 flex justify-between items-center">
+        <span className="text-indigo-600 font-bold text-lg">
+          ${item.price}
+        </span>
+
+        <span className="text-xs text-gray-400">
+          Owner: {item.owner_id}
+        </span>
+      </div>
+    </div>
+  ))}
+</div>
         </div>
       )}
     </div>

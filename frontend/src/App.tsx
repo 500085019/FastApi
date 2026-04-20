@@ -38,7 +38,8 @@ function App() {
         </button>
       </nav>
 
-      <main className="app-main">
+       <main className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-6">
+  <div className="max-w-6xl mx-auto space-y-6"></div>
         {activeTab === 'users' && (
           <div className="tab-content">
             <CreateUser onUserCreated={handleUserCreated} />

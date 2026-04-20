@@ -51,12 +51,13 @@ const CreateItem: React.FC<CreateItemProps> = ({ onItemCreated }) => {
     <div className="mb-6">
       {/* CREATE BUTTON */}
       <button
-        onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-xl shadow hover:bg-blue-700 transition"
-      >
-        <PlusIcon className="h-5 w-5" />
-        Create Item
-      </button>
+         onClick={() => setIsOpen(true)}
+  className="fixed bottom-8 right-8 bg-gradient-to-r from-blue-600 to-indigo-600 
+  text-white p-4 rounded-full shadow-2xl hover:scale-110 
+  transition-all duration-300"
+>
+  +
+</button>
 
       {/* MODAL */}
       <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
