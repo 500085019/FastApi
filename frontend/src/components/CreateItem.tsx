@@ -4,10 +4,21 @@ import '../styles/components.css'
 import { Item , ItemListProps } from '../types/item'
 
 
+
+
 const ItemList: React.FC<ItemListProps> = ({ refreshTrigger }) => {
   const [items, setItems] = useState<Item[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>('')
+
+  // NEW: create form state
+  const [showForm, setShowForm] = useState(false)
+  const [newItem, setNewItem] = useState({
+    title: '',
+    description: '',
+    price: '',
+    owner_id: ''
+  })
 
   useEffect(() => {
     fetchItems()
@@ -19,7 +30,7 @@ const ItemList: React.FC<ItemListProps> = ({ refreshTrigger }) => {
     try {
       const data = await apiClient.getItems(0, 50)
       setItems(data)
-    } catch (err : any) {
+    } catch (err: any) {
       setError('Failed to fetch items')
       console.error(err.message)
     } finally {
@@ -39,13 +50,91 @@ const ItemList: React.FC<ItemListProps> = ({ refreshTrigger }) => {
     }
   }
 
+  // NEW: handle input change
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewItem({
+      ...newItem,
+      [e.target.name]: e.target.value
+    })
+  }
+
+  // NEW: create item
+  const handleCreate = async () => {
+    try {
+      const payload = {
+        ...newItem,
+        price: parseFloat(newItem.price),
+        owner_id: parseInt(newItem.owner_id)
+      }
+
+      const createdItem = await apiClient.createItem(payload)
+
+      setItems([createdItem, ...items])
+      setShowForm(false)
+
+      // reset form
+      setNewItem({
+        title: '',
+        description: '',
+        price: '',
+        owner_id: ''
+      })
+    } catch (err) {
+      setError('Failed to create item')
+      console.error(err)
+    }
+  }
+
   if (loading) return <div className="loading">Loading items...</div>
 
   return (
     <div className="component-container">
       <h2>Items List</h2>
+
+      {/* CREATE BUTTON */}
+      <button 
+        className="btn-primary"
+        onClick={() => setShowForm(!showForm)}
+      >
+        {showForm ? 'Cancel' : 'Create Item'}
+      </button>
+
+      {/* CREATE FORM */}
+      {showForm && (
+        <div className="form-container">
+          <input
+            name="title"
+            placeholder="Title"
+            value={newItem.title}
+            onChange={handleChange}
+          />
+          <input
+            name="description"
+            placeholder="Description"
+            value={newItem.description}
+            onChange={handleChange}
+          />
+          <input
+            name="price"
+            placeholder="Price"
+            value={newItem.price}
+            onChange={handleChange}
+          />
+          <input
+            name="owner_id"
+            placeholder="Owner ID"
+            value={newItem.owner_id}
+            onChange={handleChange}
+          />
+
+          <button className="btn-success" onClick={handleCreate}>
+            Submit
+          </button>
+        </div>
+      )}
+
       {error && <div className="error-message">{error}</div>}
-      
+
       {items.length === 0 ? (
         <p className="no-data">No items found</p>
       ) : (
